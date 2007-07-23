@@ -85,7 +85,7 @@ REBUILD_FIXTURES environment variables:
 Scenarios can also be nested using the familiar Rake-style dependency declaration.
 
   scenario :users do
-    %w( Tom Chris ).each do |user)
+    %w( Tom Chris ).each do |user|
       User.create(:name => user)
     end
   end
