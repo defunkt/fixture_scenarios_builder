@@ -1,0 +1,107 @@
+FixtureScenariosBuilder
+=======================
+
+This plugin is an add-on to the FixtureScenarios plugin by Tom Preston-Werner.
+
+Info: http://code.google.com/p/fixture-scenarios/
+SVN : http://fixture-scenarios.googlecode.com/svn/trunk/fixture_scenarios
+
+== The Setup
+
+You may, from time to time, wish to build your fixtures entirely in Ruby.
+Doing so has its advantages, such as automatically created join tables
+and default attributes.  YAML files, however, bring with them some real
+nice features in Rails which are difficult to abandon: transactional fixtures, 
+table_name(:key) helpers, and auto-clearing between tests.  How does one get 
+the best of both worlds?
+
+== The Download
+
+Using the +scenario+ method within <tt>scenarios.rb</tt> file,
+FixtureScenariosBuilder can create your YAML fixture scenarios automatically
+at run time from Ruby-created fixtures.
+
+Create a <tt>scenarios.rb</tt> file and place it in the root "fixtures"
+directory:
+
+  [RAILS_ROOT]
+  +-test/
+    +-fixtures/
+      +-scenarios.rb
+
+Now build your scenarios in this file, wrapping scenarios in the 
++scenario+ method and providing it with the name of your scenario.  
+A brief example of a complete <tt>scenarios.rb</tt> file:
+
+  scenario :banned_users do
+    %w( Tom Chris Kevin ).each_with_index do |user, index|
+      User.create(:name => user, :banned => index.odd?)
+    end
+  end
+
+Assuming +banned+ is a boolean field, this will create for us (when our tests
+are first run) the following:
+
+  [RAILS_ROOT]
+  +-test/
+    +-fixtures/
+      +-banned_users/
+        +-users.yml
+
+Our generated <tt>users.yml</tt> file will look something like this:
+
+  chris: 
+    name: Chris
+    id: "2"
+    banned: "1"
+    updated_at: 2007-05-09 09:08:04
+    created_at: 2007-05-09 09:08:04
+  kevin: 
+    name: Kevin
+    id: "3"
+    banned: "0"
+    updated_at: 2007-05-09 09:08:04
+    created_at: 2007-05-09 09:08:04
+  tom: 
+    name: Tom
+    id: "1"
+    banned: "0"
+    updated_at: 2007-05-09 09:08:04
+    created_at: 2007-05-09 09:08:04
+
+Notice how the keys correspond to the user names.  FixtureScenariosBuilder will try,
+to an extent, to guess the name of your key.  If it can't figure it out,
+keys will be the standard user_001, user_002, etc format.
+
+On subsequent test runs this YAML file will not be needlessly re-created.  YAML
+files will only be re-generated when the <tt>scenarios.rb</tt> file is 
+modified.
+
+If you for some reason need to force your scenarios to rebuild, pass in the
+REBUILD_FIXTURES environment variables:
+
+  $ rake test:units REBUILD_FIXTURES=true
+
+Scenarios can also be nested using the familiar Rake-style dependency declaration.
+
+  scenario :users do
+    %w( Tom Chris ).each do |user)
+      User.create(:name => user)
+    end
+  end
+
+  scenario :banned_users => :users do
+    User.create(:name => 'Kevin', :banned => true)
+  end
+
+== Rake
+
+FixtureScenariosBuilder comes with one Rake task, `db:scenario:build' -- use it to
+attempt to build your scenarios on demand.
+
+== Bugs!
+
+Please report bugs here: http://err.lighthouseapp.com/projects/466-plugins/tickets
+
+>> Chris Wanstrath
+=> chris[at]ozmm[dot]org
