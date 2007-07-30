@@ -2,9 +2,16 @@ FixtureScenariosBuilder
 =======================
 
 This plugin is an add-on to the FixtureScenarios plugin by Tom Preston-Werner.
+FixtureScenarios is required for this plugin to work.
 
-Info: http://code.google.com/p/fixture-scenarios/
-SVN : http://fixture-scenarios.googlecode.com/svn/trunk/fixture_scenarios
+FixtureScenarios
+  Info: http://code.google.com/p/fixture-scenarios/
+  SVN : http://fixture-scenarios.googlecode.com/svn/trunk/fixture_scenarios
+
+This plugin
+  Info: http://errtheblog.com/post/7708
+  SVN : svn://errtheblog.com/svn/plugins/fixture_scenarios_builder
+  Bugs: http://err.lighthouseapp.com/projects/466-plugins/tickets/new
 
 == The Setup
 
