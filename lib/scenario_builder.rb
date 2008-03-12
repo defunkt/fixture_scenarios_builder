@@ -104,10 +104,10 @@ class ScenarioBuilder
 
   def record_name(record_hash)
     key = [@table_name.classify, record_hash['id'].to_i]
-    @record_names << (@custom_names[key] || inferred_record_name(record_hash) )
+    @record_names << (name = @custom_names[key] || inferred_record_name(record_hash) )
     name
   end
-  
+
   def inferred_record_name(record_hash)
     @@record_name_fields.each do |try|
       if name = record_hash[try]
