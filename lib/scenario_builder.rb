@@ -151,7 +151,11 @@ class ScenarioBuilder
   end
 
   def fixtures_dir(*paths)
-    File.join(RAILS_ROOT, 'test', 'fixtures', *paths)
+    File.join(RAILS_ROOT, spec_or_test_dir, 'fixtures', *paths)
+  end
+  
+  def spec_or_test_dir
+    File.exists?(File.join(RAILS_ROOT, 'spec')) ? 'spec' : 'test'
   end
 
   def fixtures_dir_exists?(dir = @scenario)
