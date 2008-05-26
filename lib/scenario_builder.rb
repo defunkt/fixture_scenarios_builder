@@ -87,7 +87,7 @@ class ScenarioBuilder
   end
 
   def skip_tables
-    %w( schema_info )
+    %w( schema_info schema_migrations )
   end
   
   def name(custom_name, model_object)
