@@ -80,37 +80,6 @@ Notice how the keys correspond to the user names.  FixtureScenariosBuilder will 
 to an extent, to guess the name of your key.  If it can't figure it out,
 keys will be the standard user_001, user_002, etc format.
 
-Thanks to Paul Cantrell's handywork, custom key names are supported. Simply use the
-+name+ method:
-
-  scenario :foo do
-    name "small_red_widget", Widget.create(:size => 'small', :color => 'red')
-    name "big_blue_widget",  Widget.create(:size => 'big',   :color => 'blue')
-  end
-
-Another option is to assign your records to instance variables, then call +names_from_ivars+
-at the conclusion of your +scenario+ block.
-
-  scenario :foo do
-    @small_red_widget = Widget.create(:size => 'small', :color => 'red')
-    @big_blue_widget  = Widget.create(:size => 'big',   :color => 'blue')
-
-   names_from_ivars!
-  end
-
-The above produces the following YAML:
-
-  small_red_widget:
-    size: small
-    color: red
-    updated_at: 2007-12-27 10:09:05
-    created_at: 2007-12-27 10:09:05
-  big_blue_widget:
-    size: big
-    color: blue
-    updated_at: 2007-12-27 10:19:23
-    created_at: 2007-12-27 10:19:23
-
 On subsequent test runs this YAML file will not be needlessly re-created.  YAML
 files will only be re-generated when the <tt>scenarios.rb</tt> file is 
 modified.

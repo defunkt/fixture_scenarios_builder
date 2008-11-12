@@ -24,16 +24,15 @@ class ScenarioBuilder
     when Hash
       parent    = scenario.values.first
       scenario  = scenario.keys.first
-      @scenario = "#{validate_parent(parent)}/#{scenario}" 
+      @scenario = "#{validate_parent(parent)}/#{scenario}"
     when Symbol, String
       @scenario = scenario.to_s
-    else 
+    else
       raise "I don't know how to build `#{scenario.inspect}'"
     end
 
     @block    = block
     @children = []
-    @custom_names = {}
   end
 
   def validate_parent(scenario)
@@ -70,16 +69,16 @@ class ScenarioBuilder
   def surface_errors
     yield
   rescue Object => error
-    puts 
+    puts
     say "There was an error building scenario `#{@scenario}'", error.inspect
-    puts 
+    puts
     puts error.backtrace
-    puts 
+    puts
     exit!
   end
 
   def delete_tables
-    ActiveRecord::Base.connection.tables.each { |t| ActiveRecord::Base.connection.delete(@@delete_sql % t)  }
+    tables.each { |t| ActiveRecord::Base.connection.delete(@@delete_sql % t)  }
   end
 
   def tables
@@ -87,32 +86,15 @@ class ScenarioBuilder
   end
 
   def skip_tables
-    %w( schema_info )
-  end
-  
-  def name(custom_name, model_object)
-    key = [model_object.class.name, model_object.id]
-    @custom_names[key] = custom_name
-    model_object
-  end
-  
-  def names_from_ivars!
-    instance_values.each do |var, value|
-      name(var, value) if value.is_a? ActiveRecord::Base
-    end
-  end
-
-  def record_name(record_hash)
-    key = [@table_name.classify, record_hash['id'].to_i]
-    @record_names << (name = @custom_names[key] || inferred_record_name(record_hash) )
-    name
+    %w( schema_info schema_migrations )
   end
 
   def inferred_record_name(record_hash)
     @@record_name_fields.each do |try|
       if name = record_hash[try]
         inferred_name = name.underscore.gsub(/\W/, ' ').squeeze(' ').tr(' ', '_')
-        count = @record_names.select { |name| name == inferred_name }.size
+        count = @inferred_names.select { |name| name == inferred_name }.size
+        @inferred_names << inferred_name
         return count.zero? ? inferred_name : "#{inferred_name}_#{count}"
       end
     end
@@ -128,9 +110,9 @@ class ScenarioBuilder
       next files if rows.empty?
 
       @row_index      = '000'
-      @record_names = []
+      @inferred_names = []
       fixture_data = rows.inject({}) do |hash, record|
-        hash.merge(record_name(record) => record)
+        hash.merge(inferred_record_name(record) => record)
       end
 
       write_fixture_file fixture_data
